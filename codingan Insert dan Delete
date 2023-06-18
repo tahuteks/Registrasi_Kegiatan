@@ -1,0 +1,100 @@
+<?php
+// Koneksi ke database
+$host = 'localhost';
+$username = 'nama_pengguna';
+$password = 'kata_sandi';
+$database = 'nama_database';
+
+$koneksi = mysqli_connect($host, $username, $password, $database);
+if (!$koneksi) {
+    die("Koneksi gagal: " . mysqli_connect_error());
+}
+
+// Tombol Insert ditekan
+if (isset($_POST['insert'])) {
+    $nama = $_POST['nama'];
+    $tanggal_lahir = $_POST['tanggal_lahir'];
+    $umur = $_POST['umur'];
+    $alamat = $_POST['alamat'];
+    $pendidikan = $_POST['pendidikan'];
+    $pilih_judul_seminar = $_POST['pilih_judul_seminar'];
+    
+
+    // Query untuk insert data
+    $query = "INSERT INTO tabel_data (nama, tanggal_lahir , umur, alamat, pendidikan, pilih_judul_seminar) VALUES ('$nama', $tanggal_lahir , $umur, $alamat, $pendidikan, $pilih_judul_seminar )";
+
+    if (mysqli_query($koneksi, $query)) {
+        echo "Data berhasil diinsert.";
+    } else {
+        echo "Error: " . $query . "<br>" . mysqli_error($koneksi);
+    }
+}
+
+// Tombol Delete ditekan
+if (isset($_POST['delete'])) {
+    $id = $_POST['id'];
+
+    // Query untuk delete data
+    $query = "DELETE FROM tabel_data WHERE id = $id";
+
+    if (mysqli_query($koneksi, $query)) {
+        echo "Data berhasil dihapus.";
+    } else {
+        echo "Error: " . $query . "<br>" . mysqli_error($koneksi);
+    }
+}
+
+// Mengambil data dari database
+$query = "SELECT * FROM tabel_data";
+$result = mysqli_query($koneksi, $query);
+
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Insert dan Delete Seminar</title>
+</head>
+<body>
+    <h2>Data</h2>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>nama</th>
+            <th>tanggal_lahir</th>
+            <th>umur</th>
+            <th>alamat</th>
+            <th>pendidikan</th>
+            <th>pilih_judul_seminar</th>
+        </tr>
+        <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+        <tr>
+            <td><?php echo $row['id']; ?></td>
+            <td><?php echo $row['nama']; ?></td>
+            <td><?php echo $row['tanggal_lahir']; ?></td>
+            <td><?php echo $row['alamat']; ?></td>
+            <td><?php echo $row['pendidikan']; ?></td>
+            <td><?php echo $row['pilih_judul_seminar']; ?></td>
+        </tr>
+        <?php } ?>
+    </table>
+
+    <h2>Insert Data</h2>
+    <form method="post">
+        Nama: <input type="text" name="nama" required><br>
+        Tanggal_Lahir: <input type="number" name="tanggal_lahir" required><br>
+        Umur: <input type="number" name="umur" required><br>
+        Alamat: <input type="text" name="alamat" required><br>
+        Pendidikan: <input type="text" name="pendidikan" required><br>
+        Pilih Judul Seminar: <input type="text" name="pilih_judul_seminar" required><br>
+
+        <input type="submit" name="insert" value="Insert">
+    </form>
+
+    <h2>Delete Data</h2>
+    <form method="post">
+        ID: <input type="number" name="id" required><br>
+        <input type="submit" name="delete" value="Delete">
+    </form>
+</body>
+</html>
